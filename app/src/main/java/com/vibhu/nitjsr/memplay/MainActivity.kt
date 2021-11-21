@@ -1,10 +1,12 @@
 package com.vibhu.nitjsr.memplay
 
+import android.animation.ArgbEvaluator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         rvBoard = findViewById(R.id.rvBoard)
         tvNumMoves = findViewById(R.id.tvNumMoves)
         tvNumPairs = findViewById(R.id.tvNumPairs)
+        tvNumPairs.setTextColor(ContextCompat.getColor(this,R.color.color_progress_none))
         memoryGame = MemoryGame(boardSize)
         clRoot= findViewById(R.id.clRoot)
         //layout manager is responsible for measuring and positioning of items(here called as itemview) infalted in RV
@@ -58,10 +61,22 @@ class MainActivity : AppCompatActivity() {
             return
         }
         if(memoryGame.isCardFaceUp(position)){
-            Snackbar.make(clRoot,"Invalid Move",Snackbar.LENGTH_LONG).show()
+            Snackbar.make(clRoot,"Invalid Move",Snackbar.LENGTH_SHORT).show()
             return
         }
-        memoryGame.flipCard(position)//card ka state badal do
+        if(memoryGame.flipCard(position)) {//card ka state badal do
+            Log.i(TAG, "Found a Match! Num Pairs found: ${memoryGame.numPairsFound}")
+            val color = ArgbEvaluator().evaluate(
+                memoryGame.numPairsFound.toFloat() / boardSize.getNumPairs(),
+                ContextCompat.getColor(this,R.color.color_progress_none),
+                ContextCompat.getColor(this,R.color.color_progress_full)
+            ) as Int//interpolation lagana
+            tvNumPairs.setTextColor(color)
+            tvNumPairs.text = "Pairs: ${memoryGame.numPairsFound} / ${boardSize.getNumPairs()}"
+            if(memoryGame.haveWonGame())
+                Snackbar.make(clRoot,"You won! Congrats. Hehehe😁",Snackbar.LENGTH_LONG).show()
+        }
+        tvNumMoves.text = "Moves: ${memoryGame.getNumMoves()}"
         adapter.notifyDataSetChanged()//Neend mein soye hue adapter ko batao ki bhaiya badal do RV ko
     }
 }

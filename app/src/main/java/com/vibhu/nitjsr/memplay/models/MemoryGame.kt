@@ -6,6 +6,7 @@ class MemoryGame(private val boardSize: BoardSize){
     //har kaam MainActivity se nahi karwake mai is class se karwayuhnga
     val cards: List<MemoryCard>
     private var indexOfSingleSelectedCard:Int? = null //jab game chalu hoga tab yeh null rahega
+    private var numCardFlips = 0
 
     var numPairsFound = 0
     init{//initialize the game
@@ -14,6 +15,7 @@ class MemoryGame(private val boardSize: BoardSize){
         cards = randomizedImages.map { MemoryCard(it) }
     }
     fun flipCard(position: Int):Boolean {
+        numCardFlips++;
         val card:MemoryCard = cards[position]
         /*2 cases possible hain:-
         0 cards are flipped  --> If so then restore cards & flip this selected card
@@ -57,5 +59,10 @@ class MemoryGame(private val boardSize: BoardSize){
 
     fun isCardFaceUp(position: Int): Boolean {
         return cards[position].isFaceUp
+    }
+
+    fun getNumMoves(): Int {
+        //user ne kitni chaal chali hain woh return karo
+        return numCardFlips/2
     }
 }
