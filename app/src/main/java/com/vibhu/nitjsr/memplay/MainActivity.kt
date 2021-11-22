@@ -1,11 +1,15 @@
 package com.vibhu.nitjsr.memplay
 
 import android.animation.ArgbEvaluator
+import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -77,12 +81,63 @@ class MainActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.mi_refresh -> {
                 //set up the game again
-                setUpBoard()
+                if(memoryGame.getNumMoves() > 0 && !memoryGame.haveWonGame()){
+                    showAlertDialog("Quit your current game?",null,View.OnClickListener { setUpBoard() })
+                }
+                else
+                    setUpBoard()
+            }
+            R.id.mi_new_size ->{
+                showNewSizeDialog()
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun showNewSizeDialog() {
+        val boardSizeView:View = LayoutInflater.from(this).inflate(R.layout.dialog_board_size,null)
+        val radioGroupSize:RadioGroup = boardSizeView.findViewById<RadioGroup>(R.id.radioGroup)
+        when(boardSize){
+            BoardSize.EASY -> radioGroupSize.check(R.id.rbEasy)
+            BoardSize.MEDIUM -> radioGroupSize.check(R.id.rbMedium)
+            BoardSize.HARD -> radioGroupSize.check(R.id.rbHard)
+        }
+        showAlertDialog("Choose new Size",boardSizeView,View.OnClickListener {
+            //Seat a new value for boardsize
+            boardSize = when(radioGroupSize.checkedRadioButtonId){
+                R.id.rbEasy -> BoardSize.EASY
+                R.id.rbMedium -> BoardSize.MEDIUM
+                else -> BoardSize.HARD
+            }
+            setUpBoard()
+        })
+    }
+
+    private fun showAlertDialog(title:String , view:View?,positiveClickListener:View.OnClickListener) {
+        AlertDialog.Builder(this).setTitle(title)
+            .setView(view)
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Haan bhai"){_,_->
+                positiveClickListener.onClick(null)
+            }.show()
+    }
+
     private fun setUpBoard(){
+        when(boardSize){
+            BoardSize.EASY -> {
+                tvNumMoves.text = "Easy: 4X2"
+                tvNumPairs.text = "Pairs:0/4"
+            }
+            BoardSize.MEDIUM -> {
+                tvNumMoves.text = "MEDIUM: 6X3"
+                tvNumPairs.text = "Pairs:0/9"
+            }
+            BoardSize.HARD -> {
+                tvNumMoves.text = "HARD: 6X4"
+                tvNumPairs.text = "Pairs:0/12"
+            }
+        }
         tvNumPairs.setTextColor(ContextCompat.getColor(this,R.color.color_progress_none))
         memoryGame = MemoryGame(boardSize)
         //layout manager is responsible for measuring and positioning of items(here called as itemview) infalted in RV

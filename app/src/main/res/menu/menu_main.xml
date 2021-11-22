@@ -8,4 +8,9 @@
         android:id="@+id/mi_refresh"
         android:icon="@drawable/ic_refresh"
         tools:ignore="HardcodedText" />
+    <item android:title="Choose new Size"
+        app:showAsAction="never"
+        android:id="@+id/mi_new_size"
+        android:icon="@drawable/ic_refresh"
+        tools:ignore="HardcodedText" />
 </menu>
