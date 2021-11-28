@@ -13,4 +13,9 @@
         android:id="@+id/mi_new_size"
         android:icon="@drawable/ic_refresh"
         tools:ignore="HardcodedText" />
+    <item android:title="Create custom game"
+        app:showAsAction="never"
+        android:id="@+id/mi_custom"
+        android:icon="@drawable/ic_refresh"
+        tools:ignore="HardcodedText" />
 </menu>

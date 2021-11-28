@@ -2,6 +2,7 @@ package com.vibhu.nitjsr.memplay
 
 import android.animation.ArgbEvaluator
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -20,10 +21,12 @@ import com.vibhu.nitjsr.memplay.models.BoardSize
 import com.vibhu.nitjsr.memplay.models.MemoryCard
 import com.vibhu.nitjsr.memplay.models.MemoryGame
 import com.vibhu.nitjsr.memplay.utils.DEFAULT_ICONS
+import com.vibhu.nitjsr.memplay.utils.EXTRA_BOARD_SIZE
 
 class MainActivity : AppCompatActivity() {
     companion object{
         private const val TAG = "MainActivity"
+        private const val CREATE_REQUEST_CODE = 248
     }
 
     private lateinit var memoryGame: MemoryGame
@@ -91,8 +94,30 @@ class MainActivity : AppCompatActivity() {
                 showNewSizeDialog()
                 return true
             }
+            R.id.mi_custom ->{
+                showCreationDialog()
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showCreationDialog() {
+        val boardSizeView:View = LayoutInflater.from(this).inflate(R.layout.dialog_board_size,null)
+        val radioGroupSize:RadioGroup = boardSizeView.findViewById<RadioGroup>(R.id.radioGroup)
+        showAlertDialog("Choose your Memory Board",boardSizeView,View.OnClickListener {
+            //Seat a new value for boardsize
+            val desiredBoardSize  = when(radioGroupSize.checkedRadioButtonId){
+                R.id.rbEasy -> BoardSize.EASY
+                R.id.rbMedium -> BoardSize.MEDIUM
+                else -> BoardSize.HARD
+            }
+            //navigate user to new Activity to allow them choose photos
+            val intent:Intent = Intent(this,CreateActivity::class.java)
+            intent.putExtra(EXTRA_BOARD_SIZE,desiredBoardSize)
+            startActivityForResult(intent,CREATE_REQUEST_CODE)
+
+        })
     }
 
     private fun showNewSizeDialog() {
