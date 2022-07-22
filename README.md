@@ -6,7 +6,7 @@
 ## Features
 ✅ An open-source Android memory game <br>
 ✅ Play with the default icons, or play a custom game using photos from your phone <br>
-✅ You can also download memory boards made by others by entering the game name
+✅ You can also download memory boards made by others by entering the game name<br>
 ✅ Built in MVVM Architecture using Kotlin
 
 
